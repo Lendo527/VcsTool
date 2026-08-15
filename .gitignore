@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+.venv/
+venv/
+env/
+
+# PyInstaller 打包产物
+build/
+dist/
+*.spec
+
+# IDE / 系统
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
+
+# 本地配置（含个人项目路径，不应上传）
+config.json
