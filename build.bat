@@ -8,7 +8,7 @@ pip install pyinstaller
 
 echo === 打包（单文件 exe）===
 pyinstaller --noconfirm --onefile --windowed ^
-  --name "VCSTool" ^
+  --name "VcsTool" ^
   --icon "icon.ico" ^
   --add-data "icon.ico;." ^
   --collect-all keyboard ^
@@ -16,5 +16,5 @@ pyinstaller --noconfirm --onefile --windowed ^
 
 echo.
 echo === 完成 ===
-echo 输出文件: dist\VCSTool.exe
+echo 输出文件: dist\VcsTool.exe
 pause

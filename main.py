@@ -11,7 +11,7 @@ from resources import icon_path
 
 def main():
     app = QApplication(sys.argv)
-    app.setApplicationName("VCSTool")
+    app.setApplicationName("Vcs Tool")
     app.setQuitOnLastWindowClosed(False)  # 关闭窗口后仍由托盘维持运行
     app.setWindowIcon(QIcon(icon_path()))
 

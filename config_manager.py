@@ -13,7 +13,7 @@ class ConfigManager:
 
     def _get_config_dir(self):
         base = os.environ.get("APPDATA") or os.path.expanduser("~")
-        d = os.path.join(base, "VCSTool")
+        d = os.path.join(base, "VcsTool")
         os.makedirs(d, exist_ok=True)
         return d
 

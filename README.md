@@ -1,8 +1,10 @@
-# VCSTool
+# Vcs Tool
 
 > 一个轻量的 Windows 桌面工具，把日常的 Git / SVN 操作（拉取、提交推送、查看日志、冲突解决、自定义脚本）收进一个项目树界面，配合系统托盘常驻与全局快捷键，做到「一键到位」。
 
 基于 PyQt5 构建，开箱即用，无需命令行基础。
+
+> 说明：项目显示名为 **Vcs Tool**，代码库 / exe / 仓库命名为 **VcsTool**（无空格）。
 
 ---
 
@@ -42,7 +44,7 @@
 
 ### 方式一：直接下载 exe（推荐）
 
-前往项目的 [Releases 页面](https://github.com/your-name/VCSTool/releases)，下载最新版的 `VCSTool.exe`，双击即可运行，无需安装。
+前往项目的 [Releases 页面](https://github.com/Lendo527/VcsTool/releases)，下载最新版的 `VcsTool.exe`，双击即可运行，无需安装。
 
 > 首次运行时 Windows SmartScreen 可能提示「未识别的应用」，点击「更多信息 → 仍要运行」即可。
 
@@ -56,7 +58,7 @@
 
 ## 快速上手
 
-1. 双击 `VCSTool.exe` 启动，程序自动驻留系统托盘。
+1. 双击 `VcsTool.exe` 启动，程序自动驻留系统托盘。
 2. 按下 `Ctrl+Alt+V`（或双击托盘图标）呼出主窗口。
 3. 点击工具栏「配置」：
    - **新增项目**：填写项目名称、选择版本库类型（Git / SVN）。
@@ -71,7 +73,7 @@
 配置以 JSON 形式保存在：
 
 ```
-%APPDATA%\VCSTool\config.json
+%APPDATA%\VcsTool\config.json
 ```
 
 结构示例：
@@ -123,12 +125,12 @@
 前置：已安装 Python 3.9+。
 
 ```bat
-git clone https://github.com/your-name/VCSTool.git
-cd VCSTool
+git clone https://github.com/Lendo527/VcsTool.git
+cd VcsTool
 build.bat
 ```
 
-`build.bat` 会自动安装依赖、调用 PyInstaller 生成单文件 exe，输出在 `dist\VCSTool.exe`。
+`build.bat` 会自动安装依赖、调用 PyInstaller 生成单文件 exe，输出在 `dist\VcsTool.exe`。
 
 ### 手动命令
 
@@ -137,7 +139,7 @@ pip install -r requirements.txt
 pip install pyinstaller
 
 pyinstaller --noconfirm --onefile --windowed ^
-  --name "VCSTool" ^
+  --name "VcsTool" ^
   --icon "icon.ico" ^
   --add-data "icon.ico;." ^
   --collect-all keyboard ^
@@ -159,17 +161,15 @@ pyinstaller --noconfirm --onefile --windowed ^
    git tag v1.0.0
    git push origin v1.0.0
    ```
-2. 构建完成后，会在 GitHub **Releases** 页面生成一个新版本，附带可直接下载的 `VCSTool.exe`。
+2. 构建完成后，会在 GitHub **Releases** 页面生成一个新版本，附带可直接下载的 `VcsTool.exe`。
 3. 也可在仓库 **Actions** 标签页手动 `Run workflow` 触发构建，产物会作为 workflow artifact 提供下载（不会创建 Release）。
-
-> 首次使用前请把 README 中的 `your-name` 替换为你的 GitHub 用户名/组织名。
 
 ---
 
 ## 项目结构
 
 ```
-VCSTool/
+VcsTool/
 ├── main.py              # 程序入口
 ├── main_window.py       # 主窗口：项目树 / 输出区 / 托盘 / 后台执行
 ├── config_manager.py    # 配置持久化（项目、指令、快捷键）

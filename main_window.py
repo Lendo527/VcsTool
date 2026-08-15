@@ -45,7 +45,7 @@ class MainWindow(QMainWindow):
         self._pending = None   # (project, cmd, message) 提交流程中间态
         self._busy = False
 
-        self.setWindowTitle("VCSTool")
+        self.setWindowTitle("Vcs Tool")
         self.resize(1020, 680)
         self.setWindowIcon(QIcon(icon_path()))
 
@@ -109,11 +109,11 @@ class MainWindow(QMainWindow):
 
     def _build_tray(self):
         self.tray = QSystemTrayIcon(QIcon(icon_path()), self)
-        self.tray.setToolTip("VCSTool — Git/SVN 便捷工具")
+        self.tray.setToolTip("Vcs Tool — Git/SVN 便捷工具")
         menu = QMenu()
         menu.addAction("显示主窗口").triggered.connect(self._show_and_raise)
         menu.addAction("配置").triggered.connect(self._open_config)
-        menu.addAction("关于 VCSTool").triggered.connect(self._show_about)
+        menu.addAction("关于 Vcs Tool").triggered.connect(self._show_about)
         menu.addSeparator()
         menu.addAction("退出").triggered.connect(self._real_quit)
         self.tray.setContextMenu(menu)
@@ -286,13 +286,13 @@ class MainWindow(QMainWindow):
 
     def _show_about(self):
         QMessageBox.about(
-            self, "关于 VCSTool",
-            "<h3>VCSTool</h3>"
+            self, "关于 Vcs Tool",
+            "<h3>Vcs Tool</h3>"
             "<p>Git / SVN 便捷操作工具</p>"
             "<p>版本 1.0.0</p>"
             "<p>基于 PyQt5 构建：项目树管理、一键拉取/提交推送、冲突解决、"
             "自定义脚本执行、全局快捷键呼出与系统托盘常驻。</p>"
-            "<p>配置文件：%APPDATA%\\VCSTool\\config.json</p>"
+            "<p>配置文件：%APPDATA%\\VcsTool\\config.json</p>"
         )
 
     # ============================== 托盘 / 关闭 ==============================
@@ -304,7 +304,7 @@ class MainWindow(QMainWindow):
         if self.tray.isVisible():
             e.ignore()
             self.hide()
-            self.tray.showMessage("VCSTool",
+            self.tray.showMessage("Vcs Tool",
                                   "程序已最小化到托盘，按快捷键或双击托盘图标恢复。")
         else:
             super().closeEvent(e)

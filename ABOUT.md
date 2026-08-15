@@ -1,22 +1,26 @@
-# 关于 VCSTool
+# 关于 Vcs Tool
 
 ## 项目简介
 
-**VCSTool** 是一款面向 Windows 桌面用户的 Git / SVN 便捷操作工具。
+**Vcs Tool** 是一款面向 Windows 桌面用户的 Git / SVN 便捷操作工具。
 
 它把分散在命令行里的版本库操作（拉取、提交推送、查看日志、解决冲突、运行自定义脚本）整合进一个可视化的项目树界面，配合系统托盘常驻与全局快捷键，让日常的版本库维护做到「一键到位」，无需记忆命令。
+
+> 显示名为 **Vcs Tool**，代码库 / exe / 仓库名为 **VcsTool**（无空格）。
 
 ## 基本信息
 
 | 项目 | 内容 |
 | --- | --- |
-| 名称 | VCSTool |
+| 名称 | Vcs Tool |
+| 代码库名 | VcsTool |
 | 当前版本 | 1.0.0 |
 | 类型 | Windows 桌面工具（单文件 exe） |
 | 适用平台 | Windows 10 / 11（64 位） |
 | 运行依赖 | 已安装 Git 和/或 SVN 并加入系统 PATH |
 | 技术栈 | Python · PyQt5 · keyboard · Pillow |
 | 打包工具 | PyInstaller |
+| 仓库 | [Lendo527/VcsTool](https://github.com/Lendo527/VcsTool) |
 | 许可证 | MIT |
 
 ## 核心能力
@@ -33,20 +37,19 @@
 ## 配置位置
 
 ```
-%APPDATA%\VCSTool\config.json
+%APPDATA%\VcsTool\config.json
 ```
 
 配置含本地路径，请勿分享给他人；如需迁移，复制该文件到新机器同目录即可。
 
 ## 下载
 
-前往 [Releases](https://github.com/your-name/VCSTool/releases) 获取最新版 `VCSTool.exe`。
+前往 [Releases](https://github.com/Lendo527/VcsTool/releases) 获取最新版 `VcsTool.exe`。
 
 ## 反馈与贡献
 
 - 问题反馈：请在仓库提交 Issue。
 - 代码贡献：欢迎提交 Pull Request。
-- 使用前请将文档中的 `your-name` 替换为你的 GitHub 账号。
 
 ## 致谢
 
