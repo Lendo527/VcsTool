@@ -7,10 +7,24 @@ from PyQt5.QtWidgets import (
     QTableWidgetItem, QHeaderView, QPlainTextEdit, QAbstractItemView,
     QMessageBox, QFileDialog, QSplitter, QWidget, QGroupBox
 )
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QThread, pyqtSignal
 
 from config_manager import ConfigManager
 from vcs_operations import VcsOperations
+
+
+class _HotkeyCaptureWorker(QThread):
+    """后台捕获按键组合，避免 keyboard.read_hotkey() 阻塞主线程界面"""
+    captured = pyqtSignal(str)
+    failed = pyqtSignal(str)
+
+    def run(self):
+        try:
+            import keyboard
+            rec = keyboard.read_hotkey()
+            self.captured.emit(rec)
+        except Exception as e:
+            self.failed.emit(str(e))
 
 
 # ============================== 指令编辑 ==============================
@@ -243,13 +257,16 @@ class ConfigDialog(QDialog):
     # ---- 快捷键捕获 ----
     def _capture_hotkey(self):
         QMessageBox.information(self, "按键捕获",
-                                "点击确定后，请在 2 秒内按下你想要的快捷键组合。")
-        try:
-            import keyboard
-            rec = keyboard.read_hotkey()
-            self.hk_edit.setText(rec)
-        except Exception as e:
-            QMessageBox.warning(self, "捕获失败", str(e))
+                                "点击确定后，请按下你想要的快捷键组合。")
+        self._hk_worker = _HotkeyCaptureWorker(self)
+        self._hk_worker.captured.connect(self._on_hotkey_captured)
+        self._hk_worker.failed.connect(
+            lambda e: QMessageBox.warning(self, "捕获失败", e))
+        self._hk_worker.finished.connect(self._hk_worker.deleteLater)
+        self._hk_worker.start()
+
+    def _on_hotkey_captured(self, rec):
+        self.hk_edit.setText(rec)
 
     # ---- 项目 ----
     def _refresh_projects(self):
@@ -524,8 +541,10 @@ class ConflictDialog(QDialog):
         if not f:
             return
         r = self.vcs.resolve_conflict(self.path, self.vcs_type, f, strategy)
-        if not r.success and r.error:
-            QMessageBox.warning(self, "解决失败", r.error)
+        if not r.success:
+            if r.error:
+                QMessageBox.warning(self, "解决失败", r.error)
+            return  # 解决失败时保留该条目，避免漏解决就继续提交
         # 从列表移除
         row = self.file_list.currentRow()
         self.file_list.takeItem(row)

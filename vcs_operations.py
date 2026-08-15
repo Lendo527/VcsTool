@@ -45,10 +45,13 @@ class VcsOperations:
         return None
 
     # ========== 拉取 ==========
-    def pull(self, path, vcs_type):
+    def pull(self, path, vcs_type, branch=""):
         if vcs_type == "git":
-            # --no-edit 自动合并冲突标记但不打开编辑器；先尝试 pull
-            r = self._run(["git", "pull", "--no-edit"], path)
+            # --no-edit 避免 merge 时弹出提交信息编辑器
+            args = ["git", "pull", "--no-edit"]
+            if branch:
+                args += ["origin", branch]
+            r = self._run(args, path)
             conflicts = self.git_conflicts(path)
             return VcsResult(success=r.success and not conflicts,
                              output=r.output, conflicts=conflicts, error=r.error)
@@ -59,17 +62,20 @@ class VcsOperations:
                              output=r.output, conflicts=conflicts, error=r.error)
 
     # ========== 提交推送 ==========
-    def prepare_commit(self, path, vcs_type):
+    def prepare_commit(self, path, vcs_type, branch=""):
         """提交前先拉取最新，自动合并不冲突项，返回冲突列表"""
-        return self.pull(path, vcs_type)
+        return self.pull(path, vcs_type, branch)
 
-    def finish_commit(self, path, vcs_type, message):
+    def finish_commit(self, path, vcs_type, message, branch=""):
         """实际提交并推送"""
         if vcs_type == "git":
             self._run(["git", "add", "-A"], path)
             r = self._run(["git", "commit", "-m", message], path)
             # 没有改动时 commit 会失败，属正常，继续 push
-            push = self._run(["git", "push"], path)
+            push_args = ["git", "push"]
+            if branch:
+                push_args += ["origin", branch]
+            push = self._run(push_args, path)
             out = r.output + "\n" + push.output
             return VcsResult(success=push.success, output=out,
                              error=(r.error or "") + "\n" + (push.error or ""))

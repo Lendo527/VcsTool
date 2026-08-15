@@ -45,7 +45,7 @@ class MainWindow(QMainWindow):
         self._pending = None   # (project, cmd, message) 提交流程中间态
         self._busy = False
 
-        self.setWindowTitle("Git/SVN 便捷工具")
+        self.setWindowTitle("VCSTool")
         self.resize(1020, 680)
         self.setWindowIcon(QIcon(icon_path()))
 
@@ -109,10 +109,11 @@ class MainWindow(QMainWindow):
 
     def _build_tray(self):
         self.tray = QSystemTrayIcon(QIcon(icon_path()), self)
-        self.tray.setToolTip("Git/SVN 便捷工具")
+        self.tray.setToolTip("VCSTool — Git/SVN 便捷工具")
         menu = QMenu()
         menu.addAction("显示主窗口").triggered.connect(self._show_and_raise)
         menu.addAction("配置").triggered.connect(self._open_config)
+        menu.addAction("关于 VCSTool").triggered.connect(self._show_about)
         menu.addSeparator()
         menu.addAction("退出").triggered.connect(self._real_quit)
         self.tray.setContextMenu(menu)
@@ -196,7 +197,8 @@ class MainWindow(QMainWindow):
             return
         action = cmd["action"]
         if action == "pull":
-            self._exec_async(self.vcs.pull, (cmd["path"], project["vcs_type"]),
+            self._exec_async(self.vcs.pull,
+                             (cmd["path"], project["vcs_type"], cmd.get("branch", "")),
                              self._on_simple_done, "正在拉取...")
         elif action == "log":
             self._exec_async(self.vcs.log, (cmd["path"], project["vcs_type"]),
@@ -214,6 +216,7 @@ class MainWindow(QMainWindow):
         self._set_status(busy_msg)
         w = CommandWorker(fn, *args)
         w.done.connect(done_cb)
+        w.finished.connect(w.deleteLater)  # 线程结束后自动回收，避免对象堆积
         self._worker = w
         w.start()
 
@@ -233,7 +236,8 @@ class MainWindow(QMainWindow):
             return
         self._pending = (project, cmd, msg)
         self._append_output(f"\n==== {cmd['name']}：开始提交流程 ====")
-        self._exec_async(self.vcs.prepare_commit, (cmd["path"], project["vcs_type"]),
+        self._exec_async(self.vcs.prepare_commit,
+                         (cmd["path"], project["vcs_type"], cmd.get("branch", "")),
                          self._on_prepared, "正在拉取最新代码...")
 
     def _on_prepared(self, res: VcsResult):
@@ -256,7 +260,7 @@ class MainWindow(QMainWindow):
     def _do_finish(self):
         project, cmd, msg = self._pending
         self._exec_async(self.vcs.finish_commit,
-                         (cmd["path"], project["vcs_type"], msg),
+                         (cmd["path"], project["vcs_type"], msg, cmd.get("branch", "")),
                          self._on_committed, "正在提交并推送...")
 
     def _on_committed(self, res: VcsResult):
@@ -280,6 +284,17 @@ class MainWindow(QMainWindow):
         if self.config.get_hotkey() != old_hk:
             self._register_hotkey()
 
+    def _show_about(self):
+        QMessageBox.about(
+            self, "关于 VCSTool",
+            "<h3>VCSTool</h3>"
+            "<p>Git / SVN 便捷操作工具</p>"
+            "<p>版本 1.0.0</p>"
+            "<p>基于 PyQt5 构建：项目树管理、一键拉取/提交推送、冲突解决、"
+            "自定义脚本执行、全局快捷键呼出与系统托盘常驻。</p>"
+            "<p>配置文件：%APPDATA%\\VCSTool\\config.json</p>"
+        )
+
     # ============================== 托盘 / 关闭 ==============================
     def _on_tray_activated(self, reason):
         if reason == QSystemTrayIcon.DoubleClick:
@@ -289,7 +304,7 @@ class MainWindow(QMainWindow):
         if self.tray.isVisible():
             e.ignore()
             self.hide()
-            self.tray.showMessage("Git/SVN 便捷工具",
+            self.tray.showMessage("VCSTool",
                                   "程序已最小化到托盘，按快捷键或双击托盘图标恢复。")
         else:
             super().closeEvent(e)
